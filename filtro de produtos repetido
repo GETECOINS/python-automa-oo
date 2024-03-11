@@ -1,0 +1,26 @@
+import pandas as pd
+
+# Carregue seu banco de dados
+df = pd.read_csv("caminho")
+
+# Lista para armazenar os nomes dos produtos com mais de 3 ocorrências
+produtos_filtrados = []
+
+# Loop pelas linhas do DataFrame
+for linha in df.index:
+    nome_do_produto = df.loc[linha, "Nome"]
+    sku_do_produto = df.loc[linha, "SKU"]
+    # Verifica se o nome do produto tem mais de 3 ocorrências na tabela
+    if len(df[df["Nome"] == nome_do_produto]) > 3:
+        # Adiciona o nome do produto e o SKU à lista
+        produtos_filtrados.append((nome_do_produto, sku_do_produto))
+
+# Escreve os produtos filtrados no arquivo de saída
+if produtos_filtrados:
+    with open('arquivo_de_saida.csv', 'w') as f:
+        f.write("Nome,SKU\n")  # Cabeçalho das colunas
+        for produto, sku in produtos_filtrados:
+            f.write(f'{produto},{sku}\n')
+            print(f"Produto adicionado ao arquivo de saída: {produto} (SKU: {sku})")
+else:
+    print("Nenhum produto encontrado com mais de 3 ocorrências.")
