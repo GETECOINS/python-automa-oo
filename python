@@ -1,0 +1,179 @@
+from imap_tools import MailBox, AND
+import time
+from datetime import datetime
+import pandas as pd
+import pyautogui
+
+pyautogui.PAUSE = 2
+pyautogui.press('win')
+pyautogui.write('firefox')
+pyautogui.press('Enter')
+
+
+
+
+link = 'https://avknstore.netlify.app/gifts'
+pyautogui.write(link)
+pyautogui.press('Enter')
+
+pyautogui.click(x=289, y=16)
+link2 = 'bloco de notas'
+pyautogui.write(link2)
+pyautogui.press('Enter')
+time.sleep(4)
+pyautogui.click(x=419, y=375) #clica no primeiro bloco ok
+pyautogui.click(x=137, y=14)#volta para o link 
+
+
+
+# Configurações do servidor IMAP do Gmail
+EMAIL = 'login'
+SENHA = 'senha'
+
+# Função para processar e-mails com anexos
+def processar_anexos(msg):
+    for att in msg.attachments:
+        filename = att.filename
+        payload = att.payload
+        print(f"Encontrado um novo anexo: {filename}")
+
+        # Salva o anexo em um arquivo
+        with open(filename, 'wb') as f:
+            f.write(payload)
+
+        # Chama a função que executa o segundo código
+        executar_segundo_codigo(filename)
+
+def executar_segundo_codigo(arquivo_anexo):
+    # Aqui vai o seu segundo código
+    #usuari1 = usuario.replace('@', '')
+
+    # aqui é o ponto
+    tabela = pd.read_csv(arquivo_anexo)
+
+
+
+
+
+    #usuari1 = usuario.replace('@', '')
+
+    # aqui é o ponto
+    
+
+    for linha in tabela.index:
+        nome_prodt = tabela.loc[linha, "Nome do item"] 
+        if nome_prodt != "IMVU":
+            id_genero = tabela.loc[linha, "Categoria"]
+            if id_genero != "produtos manual":
+                pyautogui.click(x=419, y=395) #clica na barra do codigo de amigo ok
+
+                # Parte do código para inserir o código do amigo
+                codigo = tabela.loc[linha, "codigo"]
+                pyautogui.write(codigo)
+                pyautogui.press("Enter")
+                
+                # Verificação se é masculino, feminino ou outro
+                id_genero = tabela.loc[linha, "Categoria"]
+
+                if "female" in id_genero:
+                    time.sleep(4)
+                    pyautogui.click(x=690, y=498) #feminino ?
+                elif "male" in id_genero:
+                    time.sleep(4)
+                    pyautogui.click(x=464, y=490) #masculino ?
+                else:
+                    time.sleep(4)
+                    pyautogui.click(x=690, y=498) #Outro que não está em categoria nenhum (x)
+
+
+
+
+        ###############
+                try:
+                    pyautogui.click(x=560, y=808) #clica na abrir a loja corrigido até aqui
+                    time.sleep(3)
+                    pyautogui.click(x=758, y=198) #clica na barra de pesquisa 
+                    # Restante do seu código...
+                    nome_prodt = tabela.loc[linha, "Nome do item"] 
+                    import pyperclip
+                    pyperclip.copy(nome_prodt) #copia na tabela
+                    pyautogui.hotkey('ctrl', 'v') #cola no chrome (SITE DO GUH)
+                    pyautogui.click(x=662, y=371)# clique no primero item
+                    print(nome_prodt)
+                    print(codigo)
+                    pyautogui.click(x=1833, y=508) #CLICA PARA SAIR
+                    pyautogui.click(x=800, y=981)#clique para envia
+                    pyautogui.scroll(5000)
+                    pyautogui.click(x=418, y=348) #clica para tirar o codigo de amigo
+                    print(f'item  {nome_prodt} para codigo {codigo}')
+                    # Seu código problemático aqui
+                except Exception as e:
+                    print(f"❌Alerta ocorreu um erro com o item {nome_prodt} para o codigo de amigo {codigo} ❌ {e}")
+        ################
+                    # O código para aqui após a verificação de gênero
+
+            else:
+                import pyperclip
+                id_genero == "produtos manual"
+                pyautogui.click(x=289, y=16) #clica para ir na janela keep
+                nome_prodt = tabela.loc[linha, "Nome do item"]
+                
+                pyperclip.copy(nome_prodt) #copia na tabela
+                pyautogui.hotkey('ctrl', 'v') #cola no chrome (SITE DO GUH)
+                pyautogui.write("->x")
+                pyautogui.press('Enter')
+                email = tabela.loc[linha, "email"]
+                pyperclip.copy(email)
+                pyautogui.hotkey("ctrl", "v")
+                pyautogui.press('Enter')
+                time.sleep(3)
+                pyautogui.click(x=137, y=14) #clica para volta para primeira janela (site do guh)
+                pyautogui.press('Enter')
+                print(f'item envio manual nome {nome_prodt} para codigo {codigo}')
+
+        elif nome_prodt == "IMVU":
+            print('IMVU')           
+            link3 = "https://avknstore.netlify.app/imvu-gifts"
+            pyautogui.click(x=631, y=63) #no pesquisar
+            pyautogui.write(link3)
+            pyautogui.press('Enter')
+            pyautogui.click(x=407, y=365) #no usuario
+            usuario = tabela.loc[linha, 'usuario'] #procurando a linha da coluna usuario:
+            usuari1 = usuario.replace('@', '')
+            pyautogui.write(usuari1)
+            pyautogui.press('Tab')
+            qnt = tabela.loc[linha, 'qnt_1']
+            qnt_numero = str(int(qnt))  # convertendo para inteiro antes de converter para string
+            pyautogui.write(qnt_numero)
+            pyautogui.press('Tab')
+            pyautogui.press('Tab')
+            pyautogui.press('Enter')
+            time.sleep(3)
+            pyautogui.click(x=631, y=63) #no pesquisar
+            pyautogui.write(link)
+            pyautogui.press('Enter')
+            print(f'Enviado para {usuario} a quantidade de {qnt_numero} Creditos')
+            
+        
+
+meu_email = MailBox('imap.gmail.com').login(EMAIL, SENHA)
+# Exemplo de registro de IDs de e-mails processados (usando um conjunto)
+emails_processados = set()
+
+while True:
+    try:
+        for msg in meu_email.fetch(AND(from_='toescapaulo041@gmail.com', date_gte=datetime(2024,3,11).date())):
+            if msg.uid not in emails_processados:
+                # Execute a ação com a tabela nova
+                processar_anexos(msg)
+                print(f"Ação executada para o e-mail de {msg.from_}!")    
+                # Adicione o ID do e-mail ao registro
+                emails_processados.add(msg.uid)
+
+        # Intervalo de verificação (por exemplo, a cada 5 minutos)
+        time.sleep(30)
+
+    except Exception as e:
+        print(f"Erro ao verificar e-mails: {e}")
+        # Aguarde antes de tentar novamente
+        time.sleep(60)
